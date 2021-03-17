@@ -1,0 +1,139 @@
+asyncapi: 2.0.0
+info:
+  title:  Gestion des opérations immobilières 
+  version:  1.0.0
+  description: un système pour envoyer et recevoir une opération
+  
+servers:
+  production: #le type du serveur
+    url: example.com:1883 #l'url du serveur
+    protocol: mqtt #le protocole utilisé
+    description: This is "My Company" broker.
+    
+    
+    
+channels:
+ operations/{operationId}/monitor:
+   parameters:
+    operationId:
+      description: idetifiant d'une opération immobilière
+      schema:
+        type: string
+        
+        
+   publish: 
+      operationId: envoyerOperation
+      message:
+         $ref : "#/components/messages/operationMessage"
+         
+   subscribe:
+      operationId: recevoirOperation 
+      message:
+         $ref : "#/components/messages/operationMessage"  
+
+
+
+  operations/0/1/action/{operationId}/createdOperationSol1:
+    publish : 
+      operationId : envoyerCreationOperation
+      message : 	
+	$ref : "#/components/messages/operationCreatedFormat"
+	  
+
+  operations/0/1/action/{operationId}/createdOperationSol2:
+    publish : 
+      operationId : envoyerCreationOperation
+      message : 	
+	$ref : "#/components/messages/operationCreatedUrl"
+
+
+
+   
+components:
+  messages:
+    operationCreatedUrl :
+      description : URL of the created item
+      payload:
+	$ref : "#/components/schemas/operationDetailsUrl"
+    operationCreatedFormat
+      description: Status of a given subsystem
+      payload:
+         $ref : "#/components/schemas/operationDetails"
+  schemas :
+    operationDetailsUrl : 
+        type: String
+	example : "https://monserveur/mesoperarations/id"
+    operationDetails : 
+        type : object 
+        properties : 
+          id: 
+            type: string
+            description  : dentifier of the subsystem
+          libelle :
+            type : string 
+            description : libelle de l'opération
+          nomCommercial : 
+            type: string 
+            description : le nom commercial de l'opération
+          status:
+            $ref : "#/components/schemas/statusPayload"
+          adresse :
+             $ref : "#/components/schemas/adressePayload"
+          typeOperation : 
+            $ref : "#/components/schemas/typePayload"
+          refExternes :
+            type: array
+            description  : Info of presses in this subsystem
+            items : 
+             $ref : "#/components/schemas/refPayload"
+    refPayload:
+       type : object
+       properties : 
+         cle : 
+           type : string
+           description : la cle de la refernce
+         valeur : 
+           type : string
+           
+    typePayload : 
+      type : object
+      properties : 
+        href : 
+          type : string
+        natureOp : 
+          type : string
+          enum : 
+            - 'constructionNeuve'
+            - 'constructionAncienne'
+
+    adressePayload:
+      type : object 
+      properties:
+        nomVoie:
+          type : string 
+        codePostal: 
+           type : string 
+        ville : 
+          type : string
+        pays : 
+          $ref : "#/components/schemas/paysPayload"
+     
+    paysPayload : 
+      type: object 
+      properties : 
+        lienPays : 
+          type: string 
+        nomPays: 
+          type: string 
+    statusPayload:
+      type :  object 
+      properties:
+        href: 
+          type : string
+        titre:
+          type : string
+          enum : 
+            - 'Traite'
+            - 'enCours'
+            - 'aTraiter'
+          description : l'état traitement d une opération

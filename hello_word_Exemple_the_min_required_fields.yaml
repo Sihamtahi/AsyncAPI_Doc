@@ -1,0 +1,22 @@
+asyncapi: 2.0.0
+info: #contient le min d'informations requises sur l'application
+  title: Hello world application
+  version: '0.1.0'
+  
+  
+  
+servers:
+  production: #le type du serveur
+    url: broker.mycompany.com #l'url du serveur
+    protocol: amqp #le protocole utilisé
+    description: This is "My Company" broker.
+    
+    
+    
+channels: #contient tous les supports sur lesquels les messages circulent
+  hello: # le nom de la chaine
+    publish: #l'opération 
+      message: #Le message que nous allons publié
+        payload:
+          type: string
+          pattern: '^hello .+$'
