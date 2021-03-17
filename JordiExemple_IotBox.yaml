@@ -1,0 +1,302 @@
+asyncapi: 2.0.0
+info:
+  title: IoTBox API 
+  version:  1.0.0
+  description: Jordi Article systeme
+  
+servers:
+  production: #le type du serveur
+    url: example.com:1883 #l'url du serveur
+    protocol: mqtt #le protocole utilisé
+    description: This is "My Company" broker.
+    
+    
+    
+channels:
+ iotbox/{id}/monitor:
+   parameters:
+    id:
+      description: The ID of the IoTBox
+      schema:
+        type: string
+        
+        
+   publish: 
+      operationId: publishStatus
+      message:
+         $ref : "#/components/messages/statusMessage"
+         
+   subscribe:
+      operationId: subscribeStatus 
+      message:
+         $ref : "#/components/messages/statusMessage"   
+   
+components:
+  messages:
+    statusMessage:
+      description: Status of a given subsystem
+      payload:
+         $ref : "#/components/schemas/lineInfo"
+  schemas :
+    lineInfo : 
+        type : object 
+        properties : 
+          id: 
+            type: string
+            description  : dentifier of the subsystem
+          presses :
+            type: array
+            description  : Info of presses in this subsystem
+            items : 
+             $ref : "#/components/schemas/pressInfo"
+    pressInfo:
+       type : object
+       properties : 
+         id : 
+           type : string
+           description : Identifier of the press
+         ts : 
+           type : string
+           title : Timestamp
+         value : 
+           type : number
+           description : Pressure of the press in Pascals
+
+
+--------------------------------------------------------------------------
+asyncapi: 2.0.0
+info: #contient le min d'informations requises sur l'application
+  title: Hello world application
+  version: '0.1.0'
+  
+  
+  
+servers:
+  production: #le type du serveur
+    url: broker.mycompany.com #l'url du serveur
+    protocol: amqp #le protocole utilisé
+    description: This is "My Company" broker.
+    
+    
+    
+channels: #contient tous les supports sur lesquels les messages circulent
+  hello: # le nom de la chaine
+    publish: #l'opération 
+      message: #Le message que nous allons publié
+        payload:
+          type: string
+          pattern: '^hello .+$'
+-----------------------------------------------------------------------------------------
+asyncapi: 2.0.0
+info: #contient le min d'informations requises sur l'application
+  title: Hello world application
+  version: '0.1.0'
+  
+  
+  
+servers:
+  production: #le type du serveur
+    url: broker.mycompany.com #l'url du serveur
+    protocol: amqp #le protocole utilisé
+    description: This is "My Company" broker.
+    
+    
+    
+channels: #contient tous les supports sur lesquels les messages circulent
+  hello: # le nom de la chaine
+    publish: #l'opération 
+      message: #Le message que nous allons publié
+        payload:
+          type: string
+          pattern: '^hello .+$'
+
+----------------------------------------------------------------------------------------------------
+asyncapi: 2.0.0
+info:
+  title: Silvia Operations 
+  version: 1.0.0
+  description: le système de gestion d une opération  immobilière
+
+
+channels:
+  listeoptions/operations/{operationId}/:
+    description : la chaine dans laquelles les opérations sont produites et consommées 
+    parameters :  
+      operationId :   
+         $ref: '#/components/parameters/operationId'
+    subscribe:
+      summary : recevoir des informations sur une operation
+      title :  recevoirOperation
+      message:
+        $ref: '#/components/messages/operationImmob'
+        
+    publish:
+      summary : envoyer des infromations sur une operation
+      title : envoyerOperation
+      message:
+        $ref: '#/components/messages/operationImmob'
+        
+        
+        
+        
+        
+        
+        
+components:
+  messages:
+    operationImmob:
+      payload : 
+         $ref: '#/components/schemas/operationPayload'
+  schemas :    
+    operationPayload : 
+      id : 
+        description : le id operation
+        type : string 
+      
+  parameters : 
+    operationId : 
+      description : identifiant opération immobilière
+      schemas : 
+        type : string
+--------------------------------------------------------------------------------------------
+asyncapi: 2.0.0
+info:
+  title: IoTBox API 
+  version:  1.0.0
+  description: Jordi Article systeme
+  
+servers:
+  production: #le type du serveur
+    url: example.com:1883 #l'url du serveur
+    protocol: mqtt #le protocole utilisé
+    description: This is "My Company" broker.
+    
+    
+    
+channels:
+ gestion/{operationId}/action:
+   parameters:
+    operationId:
+      description: The ID of the IoTBox
+      schema:
+        type: string
+        
+        
+   publish: 
+      operationId: publishStatus
+      message:
+         $ref : "#/components/messages/operationDetails"
+         
+   subscribe:
+      operationId: subscribeStatus 
+      message:
+         $ref : "#/components/messages/operationDetails"   
+   
+components:
+  messages:
+    operationDetails:
+      name:   operationDetails
+      title : les détais d'une opération
+      payload:
+         $ref : "#/components/schemas/operationPayload"
+  schemas :
+    operationPayload : 
+        type : object 
+        properties : 
+          id: 
+            type: string
+            description  : identifiant de l'opération
+          libelle :
+            type : string 
+            description : libelle de l'opération
+          nomCommercial : 
+            type: string 
+            description : le nom commercial de l'opération
+          status :
+            $ref : "#/components/schemas/statusPayload"
+          typeOperation : 
+            $ref : "#/components/schemas/typePayload"  
+          
+          refExternes :
+            type: array
+            description  : Info of presses in this subsystem
+            items : 
+             $ref : "#/components/schemas/refPayload"
+          adresse :
+             $ref : "#/components/schemas/adressePayload"
+             
+            
+        
+    
+    
+    
+     
+     
+        
+    adressePayload :
+      type : object
+      proporties :
+        nomVoie : 
+          type: string
+        codePostal: 
+           type : string 
+        ville : 
+          type : string
+        pays : 
+          payload : 
+            $ref: "#/components/schemas/paysPayload"
+    paysPayload:
+      type : object
+      proprties :
+        href:
+          type : string
+          description : le lien du pays
+        titrePays:
+          type: string 
+          description : le nom du pays   
+    statusPayload:
+      type : object 
+      properties : 
+        href : 
+          type: string 
+        titre : 
+          type : string 
+          enum : 
+            - 'Traite'
+            - 'enCours'
+            - 'aTraiter'
+          description : le traitement d une opération 
+          
+    
+    
+    
+    
+    
+    typePayload:
+        type : object
+        proporties : 
+          href : 
+            type: string 
+            description : le lien du status
+          titre : 
+            type : string 
+            enum : 
+              - 'constructionNeuve'
+              - 'constructionAncienne'
+              - 'aTraiter'
+            description : le type d une opération immobilière
+    
+    
+    
+    
+    
+    refPayload:
+       type : object
+       properties : 
+         cle : 
+           type : string  
+         valeur : 
+           type : string
+           
+        
+ 
