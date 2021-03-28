@@ -1,0 +1,68 @@
+asyncapi: 2.0.0
+info:
+  title: Items API
+  version: '1.0.0'
+  description: |
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  production:
+    url: api.itemschool.smarty.com:{port}
+    protocol: mqtt
+    description: School broker
+    variables:
+      port:
+        description: Secure connection (TLS) is available through port 8883.
+        default: '1883'
+        enum:
+          - '1883'
+          - '8883'
+ 
+defaultContentType: application/json
+
+channels:
+  smartyschool/1/0/event/{itemId}/updated:
+    description: la chaine pour recevoir les nouveaux items
+    parameters:
+      itemId:
+        $ref: '#/components/parameters/itemId'
+        
+        
+    publish:
+      summary: Receive the updated items    
+      operationId: receiveUpdatedItems
+      message:
+        $ref: '#/components/messages/updatedItems'
+         
+        
+        
+        
+components:
+  messages:
+    updatedItems :
+      name: Items
+      title  : New Item
+      summary: The student information.
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/itemsId"
+        
+
+  schemas:
+    itemsId:
+      type: string
+      exemple: 35
+      
+ 
+  
+  parameters:
+    itemId:
+      description: The ID of the item.
+      schema:
+        type: string
+
+
+###Operation().subscribeTo("smartyschool/1/0/event/5/updated");
+###Operation().subscribeTo("smartyschool/1/0/event/*/updated");
