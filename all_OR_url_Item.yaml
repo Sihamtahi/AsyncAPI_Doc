@@ -1,0 +1,85 @@
+asyncapi: 2.0.0
+info:
+  title: Items API
+  version: '1.0.0'
+  description: |
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  production:
+    url: api.itemschool.smarty.com:{port}
+    protocol: mqtt
+    description: School broker
+    variables:
+      port:
+        description: Secure connection (TLS) is available through port 8883.
+        default: '1883'
+        enum:
+          - '1883'
+          - '8883'
+ 
+defaultContentType: application/json
+
+channels:
+  smartyschool/1/0/event/{itemId}/created:
+    description: la chaine pour recevoir les nouveaux items
+    parameters:
+      itemId:
+        $ref: '#/components/parameters/itemId'
+        
+        
+    publish:
+      summary: Receive the created items by app1   
+      operationId: receiveCreatedItems
+      message:
+        oneOf : 
+          - $ref: '#/components/messages/CreatedItems'
+          - $ref: '#/components/messages/CreatedItemsUrl'
+        
+        
+        
+components:
+  messages:
+    CreatedItemsUrl :
+      name: Items
+      summary: The student information.
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/itemsUrl"
+    CreatedItems:
+      name: Items
+      title: Light measured
+      summary: The student information.
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/ItemsPayload"
+     
+
+     
+
+  schemas:
+    itemsUrl:
+      type: string
+      exemple: https://serevrs.com/components/items/35
+      
+    ItemsPayload:
+      type: object
+      properties:
+        name:
+          type: string
+          description: le nom de l'etudiant
+        Field : 
+          type : string 
+          enum:
+            - Computer science
+            - Medecine
+            - Architecture 
+  
+  parameters:
+    itemId:
+      description: The ID of the streetlight.
+      schema:
+        type: string
+
